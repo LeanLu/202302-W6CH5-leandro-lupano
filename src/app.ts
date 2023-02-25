@@ -5,12 +5,11 @@ import { knowledgesRouter } from './router/knowledges.router.js';
 
 export const app = express();
 
-app.disable('x-powered-by');
-
 const corsOptions = {
   origin: '*',
 };
 
+app.disable('x-powered-by');
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(cors(corsOptions));
