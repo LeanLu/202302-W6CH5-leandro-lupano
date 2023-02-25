@@ -52,7 +52,23 @@ export class KnowledgesFileRepo implements KnowledgesRepoStructure {
     });
   }
 
-  async update(knowledge: KnowledgeStructure) {}
+  async update(knowledge: KnowledgeStructure) {
+    const stringInitialData = await fs.readFile(file, {
+      encoding: 'utf-8',
+    });
+
+    const data: KnowledgeStructure[] = JSON.parse(stringInitialData);
+
+    const dataEdited = data.map((item) =>
+      item.id === knowledge.id ? knowledge : item
+    );
+
+    const stringFinalData = JSON.stringify(dataEdited);
+
+    await fs.writeFile(file, stringFinalData, {
+      encoding: 'utf-8',
+    });
+  }
 
   async delete(knowledge: KnowledgeStructure['id']) {}
 }

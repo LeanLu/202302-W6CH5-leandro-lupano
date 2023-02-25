@@ -14,7 +14,7 @@ knowledgesRouter.get('/:id', controller.get.bind(controller));
 
 knowledgesRouter.post('/', controller.post.bind(controller));
 
-// TEMPORAL: Hasta definir estos métodos.
-// knowledgesRouter.patch('/', controller.patch.bind(controller));
+knowledgesRouter.patch('/:id', controller.patch.bind(controller));
 
-// knowledgesRouter.delete('/', controller.delete.bind(controller));
+// TEMPORAL: Hasta definir estos métodos.
+// knowledgesRouter.delete('/:id', controller.delete.bind(controller));
