@@ -11,7 +11,5 @@
   { "id": 10, "name": "Git" },
   { "id": 11, "name": "GitHub" },
   { "id": 12, "name": "Testing-Jest" },
-  { "id": 13, "name": "Node-Express" },
-  { "name": "test UNO", "id": 14 },
-  { "name": "test DOS", "id": 15 }
+  { "id": 13, "name": "Node-Express" }
 ]
