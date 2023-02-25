@@ -10,9 +10,15 @@ export class KnowledgesController {
   }
 
   getAll(_req: Request, resp: Response) {
-    this.repo.readAll().then((data) => {
-      resp.json(data);
-    });
+    this.repo
+      .readAll()
+      .then((data) =>
+        data === undefined
+          ? resp
+              .status(404)
+              .send(`<h1>Sorry, the knowledges can not be loaded<h1>`)
+          : resp.json(data)
+      );
   }
 
   get(req: Request, resp: Response) {
@@ -50,7 +56,7 @@ export class KnowledgesController {
     if (!existingKnowledge)
       return resp
         .status(404)
-        .send(`<h1>Sorry, there is no knowledge with ID ${idNumber}<h1>`);
+        .send(`<h1>Sorry, there is no knowledge with ID: ${idNumber}<h1>`);
 
     const updatedKnowledge = Object.assign(existingKnowledge, newKnowledgeData);
 
@@ -61,6 +67,13 @@ export class KnowledgesController {
 
   async delete(req: Request, resp: Response) {
     const idNumber = Number(req.params.id);
+
+    const existingKnowledge = await this.repo.read(idNumber);
+
+    if (!existingKnowledge)
+      return resp
+        .status(404)
+        .send(`<h1>Sorry, there is no knowledge with ID: ${idNumber}<h1>`);
 
     await this.repo.delete(idNumber);
 
