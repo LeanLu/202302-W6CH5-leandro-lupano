@@ -15,7 +15,7 @@ export class KnowledgesController {
       .then((data) =>
         data === undefined
           ? resp
-              .status(404)
+              .status(500)
               .send(`<h1>Sorry, the knowledges can not be loaded<h1>`)
           : resp.status(200).json(data)
       );
@@ -48,7 +48,7 @@ export class KnowledgesController {
 
     if (idNumber === undefined)
       return resp
-        .status(404)
+        .status(406)
         .send(`<h1>Sorry, you need to put the knowledge's ID<h1>`);
 
     const existingKnowledge = await this.repo.read(idNumber);
@@ -84,7 +84,7 @@ export class KnowledgesController {
       );
   }
 
-  // TEMPORAL: Para chequeo de búsqueda de knowledge undefined:
+  // TEMPORAL: Prueba para chequeo de búsqueda de knowledge undefined:
   // checkData(
   //   data: KnowledgeStructure | KnowledgeStructure[],
   //   resp: Response,
@@ -94,7 +94,7 @@ export class KnowledgesController {
   //   return resp.json(data);
   // }
 
-  // TEMPORAL: Para chequeo de búsqueda de knowledge undefined:
+  // TEMPORAL: Para chequeo de búsqueda por ID de knowledge undefined:
   // checkExistingKnowledge(
   //   knowledge: KnowledgeStructure,
   //   resp: Response,
