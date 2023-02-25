@@ -17,7 +17,7 @@ export class KnowledgesController {
           ? resp
               .status(404)
               .send(`<h1>Sorry, the knowledges can not be loaded<h1>`)
-          : resp.json(data)
+          : resp.status(200).json(data)
       );
   }
 
@@ -42,11 +42,11 @@ export class KnowledgesController {
   }
 
   async patch(req: Request, resp: Response) {
-    const newKnowledgeData = req.body as Partial<KnowledgeStructure>;
+    const newKnowledgeData = (await req.body) as Partial<KnowledgeStructure>;
 
     const idNumber = newKnowledgeData.id;
 
-    if (!idNumber)
+    if (idNumber === undefined)
       return resp
         .status(404)
         .send(`<h1>Sorry, you need to put the knowledge's ID<h1>`);
@@ -83,4 +83,26 @@ export class KnowledgesController {
         `<h1>The knowledge with id ${req.params.id} was deleted successfully<h1>`
       );
   }
+
+  // TEMPORAL: Para chequeo de búsqueda de knowledge undefined:
+  // checkData(
+  //   data: KnowledgeStructure | KnowledgeStructure[],
+  //   resp: Response,
+  //   message: string
+  // ) {
+  //   if (data === undefined) return resp.status(404).send(message);
+  //   return resp.json(data);
+  // }
+
+  // TEMPORAL: Para chequeo de búsqueda de knowledge undefined:
+  // checkExistingKnowledge(
+  //   knowledge: KnowledgeStructure,
+  //   resp: Response,
+  //   idNumber: number
+  // ) {
+  //   if (!knowledge)
+  //     return resp
+  //       .status(404)
+  //       .send(`<h1>Sorry, there is no knowledge with ID: ${idNumber}<h1>`);
+  // }
 }

@@ -16,10 +16,11 @@ app.use(cors(corsOptions));
 
 app.use('/knowledges', knowledgesRouter);
 
-app.use('*', (_req, resp) => {
+app.use('*', (_req, resp, next) => {
   resp
     .status(404)
     .send(
       `<h1>Sorry, the path is not valid. Did you mean "http://localhost:5500/knowledges/"?<h1>`
     );
+  next();
 });
