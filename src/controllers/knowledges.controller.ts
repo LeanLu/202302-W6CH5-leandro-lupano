@@ -10,9 +10,15 @@ export class KnowledgesController {
   }
 
   getAll(_req: Request, resp: Response) {
-    this.repo.readAll().then((data) => {
-      resp.json(data);
-    });
+    this.repo
+      .readAll()
+      .then((data) =>
+        data === undefined
+          ? resp
+              .status(500)
+              .send(`<h1>Sorry, the knowledges can not be loaded<h1>`)
+          : resp.status(200).json(data)
+      );
   }
 
   get(req: Request, resp: Response) {
@@ -36,10 +42,21 @@ export class KnowledgesController {
   }
 
   async patch(req: Request, resp: Response) {
-    const newKnowledgeData = req.body as Partial<KnowledgeStructure>;
-    const idNumber = Number(req.params.id);
+    const newKnowledgeData = (await req.body) as Partial<KnowledgeStructure>;
+
+    const idNumber = newKnowledgeData.id;
+
+    if (idNumber === undefined)
+      return resp
+        .status(406)
+        .send(`<h1>Sorry, you need to put the knowledge's ID<h1>`);
 
     const existingKnowledge = await this.repo.read(idNumber);
+
+    if (!existingKnowledge)
+      return resp
+        .status(404)
+        .send(`<h1>Sorry, there is no knowledge with ID: ${idNumber}<h1>`);
 
     const updatedKnowledge = Object.assign(existingKnowledge, newKnowledgeData);
 
@@ -51,6 +68,13 @@ export class KnowledgesController {
   async delete(req: Request, resp: Response) {
     const idNumber = Number(req.params.id);
 
+    const existingKnowledge = await this.repo.read(idNumber);
+
+    if (!existingKnowledge)
+      return resp
+        .status(404)
+        .send(`<h1>Sorry, there is no knowledge with ID: ${idNumber}<h1>`);
+
     await this.repo.delete(idNumber);
 
     resp
@@ -59,4 +83,26 @@ export class KnowledgesController {
         `<h1>The knowledge with id ${req.params.id} was deleted successfully<h1>`
       );
   }
+
+  // TEMPORAL: Prueba para chequeo de búsqueda de knowledge undefined:
+  // checkData(
+  //   data: KnowledgeStructure | KnowledgeStructure[],
+  //   resp: Response,
+  //   message: string
+  // ) {
+  //   if (data === undefined) return resp.status(404).send(message);
+  //   return resp.json(data);
+  // }
+
+  // TEMPORAL: Para chequeo de búsqueda por ID de knowledge undefined:
+  // checkExistingKnowledge(
+  //   knowledge: KnowledgeStructure,
+  //   resp: Response,
+  //   idNumber: number
+  // ) {
+  //   if (!knowledge)
+  //     return resp
+  //       .status(404)
+  //       .send(`<h1>Sorry, there is no knowledge with ID: ${idNumber}<h1>`);
+  // }
 }
