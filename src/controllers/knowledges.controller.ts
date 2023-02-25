@@ -39,7 +39,6 @@ export class KnowledgesController {
     const newKnowledgeData = req.body as Partial<KnowledgeStructure>;
 
     const idNumber = newKnowledgeData.id;
-    // TEMP: Number(req.params.id)
 
     if (!idNumber)
       return resp
