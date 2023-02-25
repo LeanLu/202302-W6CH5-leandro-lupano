@@ -13,7 +13,7 @@ export interface KnowledgesRepoStructure {
   read(id: KnowledgeStructure['id']): Promise<KnowledgeStructure>;
   create(knowledge: KnowledgeStructure): Promise<void>;
   update(knowledge: KnowledgeStructure): Promise<void>;
-  delete(knowledge: KnowledgeStructure['id']): Promise<void>;
+  delete(id: KnowledgeStructure['id']): Promise<void>;
 }
 
 export class KnowledgesFileRepo implements KnowledgesRepoStructure {
@@ -70,5 +70,19 @@ export class KnowledgesFileRepo implements KnowledgesRepoStructure {
     });
   }
 
-  async delete(knowledge: KnowledgeStructure['id']) {}
+  async delete(id: KnowledgeStructure['id']) {
+    const stringInitialData = await fs.readFile(file, {
+      encoding: 'utf-8',
+    });
+
+    const data: KnowledgeStructure[] = JSON.parse(stringInitialData);
+
+    const dataFiltered = data.filter((item) => item.id !== id);
+
+    const stringFinalData = JSON.stringify(dataFiltered);
+
+    await fs.writeFile(file, stringFinalData, {
+      encoding: 'utf-8',
+    });
+  }
 }

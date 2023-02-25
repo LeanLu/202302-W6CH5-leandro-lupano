@@ -48,10 +48,15 @@ export class KnowledgesController {
     resp.sendStatus(200);
   }
 
-  // TEMPO:
-  // delete(req: Request, resp: Response) {
-  //   this.repo.read().then((data) => {
-  //     resp.json(data);
-  //   });
-  // }
+  async delete(req: Request, resp: Response) {
+    const idNumber = Number(req.params.id);
+
+    await this.repo.delete(idNumber);
+
+    resp
+      .status(200)
+      .send(
+        `<h1>The knowledge with id ${req.params.id} was deleted successfully<h1>`
+      );
+  }
 }
