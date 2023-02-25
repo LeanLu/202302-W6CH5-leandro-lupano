@@ -37,9 +37,21 @@ export class KnowledgesController {
 
   async patch(req: Request, resp: Response) {
     const newKnowledgeData = req.body as Partial<KnowledgeStructure>;
-    const idNumber = Number(req.params.id);
+
+    const idNumber = newKnowledgeData.id;
+    // TEMP: Number(req.params.id)
+
+    if (!idNumber)
+      return resp
+        .status(404)
+        .send(`<h1>Sorry, you need to put the knowledge's ID<h1>`);
 
     const existingKnowledge = await this.repo.read(idNumber);
+
+    if (!existingKnowledge)
+      return resp
+        .status(404)
+        .send(`<h1>Sorry, there is no knowledge with ID ${idNumber}<h1>`);
 
     const updatedKnowledge = Object.assign(existingKnowledge, newKnowledgeData);
 
