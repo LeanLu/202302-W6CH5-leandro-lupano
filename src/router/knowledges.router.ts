@@ -10,8 +10,7 @@ const controller = new KnowledgesController(repo);
 
 knowledgesRouter.get('/', controller.getAll.bind(controller));
 
-// TEMPORAL: Hasta definir estos métodos.
-// knowledgesRouter.get('/:id', controller.get.bind(controller));
+knowledgesRouter.get('/:id', controller.get.bind(controller));
 
 knowledgesRouter.post('/', controller.post.bind(controller));
 

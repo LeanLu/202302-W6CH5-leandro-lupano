@@ -24,8 +24,13 @@ export class KnowledgesFileRepo implements KnowledgesRepoStructure {
   }
 
   async read(id: KnowledgeStructure['id']) {
-    const algo = {};
-    return algo as KnowledgeStructure;
+    const stringInitialData = await fs.readFile(file, {
+      encoding: 'utf-8',
+    });
+
+    const data: KnowledgeStructure[] = JSON.parse(stringInitialData);
+
+    return data.filter((item) => item.id === id)[0];
   }
 
   async create(knowledge: KnowledgeStructure) {
