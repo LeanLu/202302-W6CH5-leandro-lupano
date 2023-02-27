@@ -90,6 +90,20 @@ describe('Given the KnowledgesController', () => {
       expect(repo.update).toHaveBeenCalled();
       expect(next).toHaveBeenCalled();
     });
+
+    test('Then if there is NO error from the repo and the body`s id is the same than params`ones', async () => {
+      const req = {
+        body: {
+          id: '3',
+        },
+        params: { id: '' },
+      } as unknown as Request;
+
+      await controller.patch(req, resp, next);
+
+      expect(repo.update).toHaveBeenCalled();
+      expect(resp.json).toHaveBeenCalled();
+    });
   });
 
   describe('When delete method is called', () => {
@@ -107,35 +121,5 @@ describe('Given the KnowledgesController', () => {
       expect(repo.destroy).toHaveBeenCalled();
       expect(next).toHaveBeenCalled();
     });
-  });
-});
-
-describe('Given the KnowledgesController', () => {
-  const repo: KnowledgesFileRepo = {
-    query: jest.fn(),
-    queryId: jest.fn(),
-    create: jest.fn(),
-    update: jest.fn(),
-    destroy: jest.fn(),
-  };
-
-  const req = {
-    body: {
-      id: '3',
-    },
-    params: { id: '' },
-  } as unknown as Request;
-  const resp = {
-    json: jest.fn(),
-  } as unknown as Response;
-  const next = jest.fn() as unknown as NextFunction;
-
-  const controller = new KnowledgesController(repo);
-
-  test('Then if there is NO error from the repo and the body`s id is the same than params`ones', async () => {
-    await controller.patch(req, resp, next);
-
-    expect(repo.update).toHaveBeenCalled();
-    expect(resp.json).toHaveBeenCalled();
   });
 });
