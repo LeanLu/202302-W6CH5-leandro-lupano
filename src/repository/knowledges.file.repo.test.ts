@@ -22,7 +22,7 @@ describe('Given KnowledgesFileRepo repository', () => {
       expect(fs.readFile).toHaveBeenCalled();
     });
     test('Then the repo.query should return the mock value', async () => {
-      const result = (await repo.query()) as KnowledgeStructure[];
+      const result = await repo.query();
       expect(result).toEqual([]);
     });
   });

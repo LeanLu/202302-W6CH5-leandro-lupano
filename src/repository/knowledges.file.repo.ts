@@ -74,7 +74,7 @@ export class KnowledgesFileRepo implements Repo<KnowledgeStructure> {
     const stringFinalData = JSON.stringify(finalData);
     await fs.writeFile(file, stringFinalData, 'utf-8');
 
-    return updateItem as KnowledgeStructure;
+    return updateItem;
   }
 
   async destroy(id: string): Promise<void> {
