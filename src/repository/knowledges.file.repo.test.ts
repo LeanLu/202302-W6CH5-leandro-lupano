@@ -44,27 +44,18 @@ describe('Given KnowledgesFileRepo repository', () => {
   });
 
   describe('When the create method is used', () => {
-    beforeEach(async () => {
-      (fs.readFile as jest.Mock).mockResolvedValue('[{"id": "1"}]');
-    });
-
     test('Then if it has an object to create, it should return the created object', async () => {
-      const mockKnowledge = { name: 'test' } as Partial<KnowledgeStructure>;
+      (fs.readFile as jest.Mock).mockResolvedValue('[{"id": "1"}]');
 
-      const result = await repo.create(mockKnowledge);
+      const result = await repo.create({ name: 'test' });
       expect(fs.readFile).toHaveBeenCalled();
       expect(result).toEqual({ name: 'test', id: '2' });
     });
-  });
-  describe('When the create method is used without an initial value', () => {
-    beforeEach(async () => {
+
+    test('Then if there is no initial value, the created object should has the id: 1', async () => {
       (fs.readFile as jest.Mock).mockResolvedValue('[]');
-    });
 
-    test('Then if it has an object to create, it should return the created object', async () => {
-      const mockKnowledge = { name: 'test' } as Partial<KnowledgeStructure>;
-
-      const result = await repo.create(mockKnowledge);
+      const result = await repo.create({ name: 'test' });
       expect(fs.readFile).toHaveBeenCalled();
       expect(result).toEqual({ name: 'test', id: '1' });
     });
