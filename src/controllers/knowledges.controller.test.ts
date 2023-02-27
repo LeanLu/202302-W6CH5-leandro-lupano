@@ -15,7 +15,7 @@ describe('Given the KnowledgesController', () => {
     body: {
       id: '1',
     },
-    params: { id: '2' },
+    params: { id: '1' },
   } as unknown as Request;
   const resp = {
     json: jest.fn(),

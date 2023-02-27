@@ -33,13 +33,13 @@ export class KnowledgesFileRepo implements Repo<KnowledgeStructure> {
     const initialData: string = await fs.readFile(file, { encoding: 'utf-8' });
     const data: KnowledgeStructure[] = JSON.parse(initialData);
 
-    knowledge.id = String(Math.floor(Math.random() * 1_000_000));
+    const newId: number =
+      data.length > 0 ? Math.max(...data.map((item) => Number(item.id))) : 0;
 
-    // Si el ID fuese number, podría ser:
-    // const newId: number =
-    //   data.length > 0 ? Math.max(...data.map((item) => item.id)) : 0;
+    knowledge.id = String(newId + 1);
 
-    // knowledge.id = newId + 1;
+    // Otra forma para generar ID podría ser:
+    //  knowledge.id = String(Math.floor(Math.random() * 1_000_000));
 
     const finalData = [...data, knowledge];
 
@@ -54,6 +54,7 @@ export class KnowledgesFileRepo implements Repo<KnowledgeStructure> {
     knowledge: Partial<KnowledgeStructure>
   ): Promise<KnowledgeStructure> {
     if (!knowledge.id) throw new Error('Not valid data');
+
     const initialData: string = await fs.readFile(file, {
       encoding: 'utf-8',
     });
@@ -69,8 +70,10 @@ export class KnowledgesFileRepo implements Repo<KnowledgeStructure> {
     });
 
     if (!updateItem.id) throw new Error('Id not found');
+
     const stringFinalData = JSON.stringify(finalData);
     await fs.writeFile(file, stringFinalData, 'utf-8');
+
     return updateItem as KnowledgeStructure;
   }
 
