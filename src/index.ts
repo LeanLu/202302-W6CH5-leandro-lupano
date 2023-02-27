@@ -13,5 +13,5 @@ server.on('error', () => {
 });
 
 server.on('listening', () => {
-  console.log('Listening http://localhost: ' + PORT);
+  console.log('Listening http://localhost:' + PORT + '/knowledges/');
 });
