@@ -1,7 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
-import { knowledgesRouter } from './router/knowledges.router.js';
+import { knowledgesRouter } from './routers/knowledges.router.js';
 
 export const app = express();
 

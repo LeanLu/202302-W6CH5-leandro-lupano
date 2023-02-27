@@ -1,78 +1,89 @@
-/* eslint-disable no-unused-vars */
 import fs from 'fs/promises';
+import { KnowledgeStructure } from '../entities/knowledge.model';
+import { Repo } from './repo.interface';
 
 const file = './data/data.json';
 
-export type KnowledgeStructure = {
-  id: number;
-  name: string;
-};
+export class KnowledgesFileRepo implements Repo<KnowledgeStructure> {
+  async query(): Promise<KnowledgeStructure[]> {
+    const initialData: string = await fs.readFile(file, { encoding: 'utf-8' });
+    return JSON.parse(initialData);
 
-export interface KnowledgesRepoStructure {
-  readAll(): Promise<KnowledgeStructure[]>;
-  read(id: KnowledgeStructure['id']): Promise<KnowledgeStructure>;
-  create(knowledge: KnowledgeStructure): Promise<void>;
-  update(knowledge: KnowledgeStructure): Promise<void>;
-  delete(id: KnowledgeStructure['id']): Promise<void>;
-}
-
-export class KnowledgesFileRepo implements KnowledgesRepoStructure {
-  readAll() {
-    return fs
-      .readFile(file, { encoding: 'utf-8' })
-      .then((data) => JSON.parse(data) as KnowledgeStructure[]);
-
-    // EJEMPLO SI FUESE ASYNC-AWAIT:
-    // const stringInitialData = await fs.readFile(file, {
-    //   encoding: 'utf-8',
-    // });
-    // const data: KnowledgeStructure[] = JSON.parse(stringInitialData);
+    // EJEMPLO si fuese .then() para tener el caso:
+    // readAll() {
+    //   return fs
+    //     .readFile(file, { encoding: 'utf-8' })
+    //     .then((data) => JSON.parse(data) as KnowledgeStructure[]);
   }
 
-  async read(id: KnowledgeStructure['id']) {
-    const data: KnowledgeStructure[] = await this.readAll();
+  async queryId(id: string): Promise<KnowledgeStructure> {
+    const initialData: string = await fs.readFile(file, { encoding: 'utf-8' });
+    const data: KnowledgeStructure[] = JSON.parse(initialData);
 
-    return data.filter((item) => item.id === id)[0];
+    const finalData = data.find((item) => item.id === id);
+
+    if (!finalData) throw new Error('Id not found');
+
+    return finalData;
   }
 
-  async create(knowledge: KnowledgeStructure) {
-    const data: KnowledgeStructure[] = await this.readAll();
+  async create(
+    knowledge: Partial<KnowledgeStructure>
+  ): Promise<KnowledgeStructure> {
+    const initialData: string = await fs.readFile(file, { encoding: 'utf-8' });
+    const data: KnowledgeStructure[] = JSON.parse(initialData);
 
-    const newId: number =
-      data.length > 0 ? Math.max(...data.map((item) => item.id)) : 0;
+    knowledge.id = String(Math.floor(Math.random() * 1_000_000));
 
-    knowledge.id = newId + 1;
+    // Si el ID fuese number, podría ser:
+    // const newId: number =
+    //   data.length > 0 ? Math.max(...data.map((item) => item.id)) : 0;
 
-    const stringFinalData = JSON.stringify([...data, knowledge]);
+    // knowledge.id = newId + 1;
 
-    await fs.writeFile(file, stringFinalData, {
+    const finalData = [...data, knowledge];
+
+    const stringFinalData = JSON.stringify(finalData);
+
+    await fs.writeFile(file, stringFinalData, 'utf-8');
+
+    return knowledge as KnowledgeStructure;
+  }
+
+  async update(
+    knowledge: Partial<KnowledgeStructure>
+  ): Promise<KnowledgeStructure> {
+    if (!knowledge.id) throw new Error('Not valid data');
+    const initialData: string = await fs.readFile(file, {
       encoding: 'utf-8',
     });
+    const data: KnowledgeStructure[] = JSON.parse(initialData);
+    let updateItem: KnowledgeStructure = {} as KnowledgeStructure;
+    const finalData = data.map((item) => {
+      if (item.id === knowledge.id) {
+        updateItem = { ...item, ...knowledge };
+        return updateItem;
+      }
+
+      return item;
+    });
+
+    if (!updateItem.id) throw new Error('Id not found');
+    const stringFinalData = JSON.stringify(finalData);
+    await fs.writeFile(file, stringFinalData, 'utf-8');
+    return updateItem as KnowledgeStructure;
   }
 
-  async update(knowledge: KnowledgeStructure) {
-    const data: KnowledgeStructure[] = await this.readAll();
+  async destroy(id: string): Promise<void> {
+    const initialData: string = await fs.readFile(file, { encoding: 'utf-8' });
+    const data: KnowledgeStructure[] = JSON.parse(initialData);
 
-    const dataEdited = data.map((item) =>
-      item.id === knowledge.id ? knowledge : item
-    );
+    const index = data.findIndex((item) => item.id === id);
+    if (index < 0) throw new Error('Id not found');
 
-    const stringFinalData = JSON.stringify(dataEdited);
+    data.slice(index, 1);
 
-    await fs.writeFile(file, stringFinalData, {
-      encoding: 'utf-8',
-    });
-  }
-
-  async delete(id: KnowledgeStructure['id']) {
-    const data: KnowledgeStructure[] = await this.readAll();
-
-    const dataFiltered = data.filter((item) => item.id !== id);
-
-    const stringFinalData = JSON.stringify(dataFiltered);
-
-    await fs.writeFile(file, stringFinalData, {
-      encoding: 'utf-8',
-    });
+    const stringFinalData = JSON.stringify(data);
+    await fs.writeFile(file, stringFinalData, 'utf-8');
   }
 }
